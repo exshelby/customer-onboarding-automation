@@ -1,0 +1,189 @@
+{
+  "name": "Customer Onboarding Checklist",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "3d7ac118-3e66-808d-b1ce-fa066cce443a",
+          "mode": "list",
+          "cachedResultName": "Onboarding Checklists",
+          "cachedResultUrl": "https://app.notion.com/p/3d7ac1183e66808db1cefa066cce443a"
+        },
+        "title": "={{ $('On form submission').item.json['Customer Name'] }}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Email|email",
+              "emailValue": "={{ $('On form submission').item.json['Customer Email'] }}"
+            },
+            {
+              "key": "Company|rich_text",
+              "textContent": "={{ $('On form submission').item.json['Company Name'] }}"
+            },
+            {
+              "key": "Status|select",
+              "selectValue": "Not Started"
+            },
+            {
+              "key": "Start Date|date",
+              "date": "2026-09-10T23:44:36"
+            },
+            {
+              "key": "Onboarding Steps|rich_text",
+              "textContent": "={{ $json.text }}"
+            },
+            {
+              "key": "Assigned CSM|people",
+              "peopleValue": [
+                "200e6bf1-a653-4b8b-be55-a712ffb710a9"
+              ]
+            },
+            {
+              "key": "Notes|rich_text",
+              "textContent": "Test onboarding record created from n8n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        576,
+        0
+      ],
+      "id": "bdf1045a-be62-4052-9e58-e9e00319cb42",
+      "name": "Create a database page",
+      "credentials": {
+        "notionApi": {
+          "id": "KG9Djdb3Glsgp3dM",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "New Customer Onboarding",
+        "formDescription": "Enter new client details to generate their onboarding checklist and kickoff records.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Customer Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Customer Email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Company Name",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8a431cfd-97c1-4be2-9b81-56f2df380047",
+      "name": "On form submission",
+      "webhookId": "d5a48d57-0a17-4b0a-a6eb-17f21d125146"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a Customer Success Manager at Process Street.\nA new customer just onboarded:\nCustomer: {{ $('On form submission').item.json['Customer Name'] }}\nCompany: {{ $('On form submission').item.json['Company Name'] }}\n\nGenerate a tailored, high-impact 3-step onboarding checklist to ensure fast time-to-first-value. \nFormat as a clean, concise bulleted list in one paragraph.",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "="
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        208,
+        0
+      ],
+      "id": "cd3c1d5d-a0ee-4128-a10a-3fe60fb60eb4",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        144,
+        208
+      ],
+      "id": "83930935-e6b3-4cea-bff1-4c002e640535",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "df11TZSZIc1Afpk6",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Create a database page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "548d27fb-1577-49d5-b135-00f8c3de6110",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "81b2ab6dc8784398846930ec3692c3dcc734b0b9a2573d140c85c6376fee708c"
+  },
+  "id": "HdRAzsg8dF1lzoEz",
+  "tags": []
+}
